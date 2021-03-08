@@ -1,6 +1,7 @@
 
-let keyboard = document.querySelector('.piano__keyboard');
-let controls = document.querySelectorAll('.piano__control__option');
+let keyboard = document.querySelector('.piano__keyboard'); //Keyboard div
+let controls = document.querySelectorAll('.piano__control__option'); //Radio buttons
+let playBtn = document.querySelector('.piano__play-btn'); //Play button
 let pianoNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 let keyboardMap = 
     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -8,6 +9,40 @@ let keyboardMap =
         'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
         'Z', 'X', 'C', 'V', 'B', 'N'];
 let keys = [];
+
+let happyBirthday = `G4,G4,A4,,G4,,C5,,B4,,,,
+                     G4,G4,A4,,G4,,D5,,C5,,,,
+                     G4,G4,G5,,E5,,C5,,B4,,A4,,
+                     F5,F5,E5,,C5,,D5,,C5`;
+
+let playSong = (notesString, tempo) => {
+    let notes = notesString.split(','); //Make the string into an indexed array!
+    console.log(notes);
+    let currentNote = 0;
+    let mousedown = new Event('mousedown');
+    let mouseup = new Event('mouseup');
+    let btn;
+
+    let interval = setInterval(() => {
+        if (currentNote < notes.length) { //Loop through the notes (TRIM removes empty spaces...)
+            if (notes[currentNote].trim() !== '') {
+                if (btn) { //if key is pressed
+                btn.dispatchEvent(mouseup); //Also generate the mouseup event!
+                }
+                btn = document.querySelector(`[data-letter-note="${notes[currentNote].trim()}"]`);
+                btn.dispatchEvent(mousedown);
+            }
+            currentNote++;
+        } else {
+            btn.dispatchEvent(mouseup); //Also generate the mouseup event for the last note !
+            clearInterval(interval);
+        }
+    }, 200);
+}
+
+playBtn.addEventListener('mousedown', () => {
+    playSong(happyBirthday, 2);
+});
 
 /** Function to create all the keys on initialization */
 let init = () => {
