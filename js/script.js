@@ -58,32 +58,16 @@ document.addEventListener('keydown', (e) => {
     if (e.repeat) { //true or false (check from console)
         return; //Stop fx execution
     }
-    let lastLetter = e.code.substring(e.code.length -1); //Gets the letter 'P' from "keyP"
-    let isShiftPressed = e.shiftKey; //True or false
-    let selector;
-    if (isShiftPressed) { //is shift and some letter pressed simultaneously
-        selector = `[data-keyboard="⇧+${lastLetter}"]`;
-    } else {
-        selector = `[data-keyboard=${lastLetter}]`;
-    }
-    let key = document.querySelector(selector);
-    // console.log(key);
-
-    /** WHEN RIGHT KEYS ARE PRESSED, these 2 lines of code are eXecuted!
-     * key.addEventListener('mousedown', () => { //Play sound when key is pressed
-        playSound(key);
-        key.classList.add('piano__key--playing'); //Add background when pressed
-    });  
-     */
-    if (key !== null) {
-        let mousedown = new Event('mousedown');
-        key.dispatchEvent(mousedown);
-    }
+    pressKey('mousedown', e);
 })
 
 //Same fx as above but for keyup
 document.addEventListener('keyup', (e) => {
-    let lastLetter = e.code.substring(e.code.length -1); //Gets the letter 'P' from "keyP"
+    pressKey('mouseup', e);
+});
+
+let pressKey = (mouseEvent, e) => {
+    let lastLetter = e.code.substring(e.code.length - 1); //Gets the letter 'P' from "keyP"
     let isShiftPressed = e.shiftKey; //True or false
     let selector;
     if (isShiftPressed) { //is shift and some letter pressed simultaneously
@@ -101,10 +85,10 @@ document.addEventListener('keyup', (e) => {
     });  
      */
     if (key !== null) {
-        let mouseup = new Event('mouseup');
-        key.dispatchEvent(mouseup);
+        let event = new Event(mouseEvent);
+        key.dispatchEvent(event);
     }
-})
+}
 
 /** Function to play the note when key is pressed */
 let playSound = (key) => {
