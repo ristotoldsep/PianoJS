@@ -2,6 +2,9 @@
 let keyboard = document.querySelector('.piano__keyboard'); //Keyboard div
 let controls = document.querySelectorAll('.piano__control__option'); //Radio buttons
 let playBtn = document.querySelector('.piano__play-btn'); //Play button
+let tempoSelect = document.querySelector('.piano__tempo'); //Tempo dropdown
+let songSelect = document.querySelector('.piano__song-list');
+
 let pianoNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 let keyboardMap = 
     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -10,12 +13,18 @@ let keyboardMap =
         'Z', 'X', 'C', 'V', 'B', 'N'];
 let keys = [];
 
+/** Commas are basically pauses in the songs, letter = note, number = octave */
 let happyBirthday = `G4,G4,A4,,G4,,C5,,B4,,,,
                      G4,G4,A4,,G4,,D5,,C5,,,,
                      G4,G4,G5,,E5,,C5,,B4,,A4,,
                      F5,F5,E5,,C5,,D5,,C5`;
 
-let playSong = (notesString, tempo) => {
+let jingleBells = `B3,,B3,,B3,,,,B3,,B3,,B3,,,,
+                    B3,,D4,,G3,,A3,B3,,,,,,
+                    C4,,C4,,C4,,,,C4,C4,,B3,,B3,,,,
+                    B3,B3,B3,,A3,,A3,,B3,,A3,,,,D4`;
+
+let playSong = (notesString, tempo, callback) => {
     let notes = notesString.split(','); //Make the string into an indexed array!
     console.log(notes);
     let currentNote = 0;
@@ -34,14 +43,26 @@ let playSong = (notesString, tempo) => {
             }
             currentNote++;
         } else {
-            btn.dispatchEvent(mouseup); //Also generate the mouseup event for the last note !
+            if (btn) {
+                btn.dispatchEvent(mouseup); //Also generate the mouseup event for the last note !
+            }
             clearInterval(interval);
+            callback();
         }
-    }, 200);
+    }, 300 / tempo);
 }
 
 playBtn.addEventListener('mousedown', () => {
-    playSong(happyBirthday, 2);
+    let tempo = +tempoSelect.value; //PLUS SIGNS CONVERT STRINGS TO NUMBERS!!
+    let songNum = +songSelect.value;
+    playBtn.disabled = true; //Disable the button while playing
+
+    let enablePlayBtn = () => playBtn.disabled = false; //passing the function to enable play button, once playSong function is done
+
+    switch(songNum) {
+        case 1: playSong(jingleBells, tempo, enablePlayBtn); break;
+        case 2: playSong(happyBirthday, tempo, enablePlayBtn); break;
+    }
 });
 
 /** Function to create all the keys on initialization */
